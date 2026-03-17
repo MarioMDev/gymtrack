@@ -1,0 +1,413 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.dash { padding: 1rem 0; }
+.section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 10px; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+.metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+.metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+.metric-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.metric-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 1.5rem; }
+.day-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 6px; text-align: center; cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.15s; }
+.day-card:hover { border-color: var(--color-border-secondary); }
+.day-card.active { border-color: #1D9E75; }
+.day-name { font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; margin-bottom: 4px; }
+.day-badge { font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: 500; display: inline-block; }
+.badge-fuerza { background: #E1F5EE; color: #0F6E56; }
+.badge-cardio { background: #E6F1FB; color: #185FA5; }
+.badge-descarga { background: #FAEEDA; color: #854F0B; }
+.badge-descanso { background: #F1EFE8; color: #5F5E5A; }
+.day-icon { font-size: 18px; margin-bottom: 3px; display: block; }
+.exercise-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.exercise-table th { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.exercise-table td { padding: 8px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+.exercise-table tr:last-child td { border-bottom: none; }
+.exercise-table tr:hover td { background: var(--color-background-secondary); }
+.note-cell { font-size: 11px; color: var(--color-text-secondary); }
+.semaforo { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.sem-item { flex: 1; border-radius: var(--border-radius-md); padding: 10px 12px; }
+.sem-verde { background: #EAF3DE; }
+.sem-amarillo { background: #FAEEDA; }
+.sem-rojo { background: #FCEBEB; }
+.sem-nivel { font-size: 18px; font-weight: 500; }
+.sem-verde .sem-nivel { color: #3B6D11; }
+.sem-amarillo .sem-nivel { color: #854F0B; }
+.sem-rojo .sem-nivel { color: #A32D2D; }
+.sem-label { font-size: 11px; margin-top: 2px; }
+.sem-verde .sem-label { color: #3B6D11; }
+.sem-amarillo .sem-label { color: #854F0B; }
+.sem-rojo .sem-label { color: #A32D2D; }
+.sem-action { font-size: 11px; margin-top: 3px; }
+.sem-verde .sem-action { color: #639922; }
+.sem-amarillo .sem-action { color: #BA7517; }
+.sem-rojo .sem-action { color: #A32D2D; }
+.tab-bar { display: flex; gap: 4px; margin-bottom: 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); padding-bottom: 8px; }
+.tab-btn { font-size: 13px; padding: 5px 12px; border: 0.5px solid transparent; border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-sans); }
+.tab-btn.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-tertiary); font-weight: 500; }
+.panel { display: none; }
+.panel.visible { display: block; }
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.progress-label { font-size: 13px; color: var(--color-text-secondary); min-width: 120px; }
+.progress-bar-wrap { flex: 1; background: var(--color-background-secondary); border-radius: 4px; height: 8px; overflow: hidden; }
+.progress-bar { height: 8px; border-radius: 4px; transition: width 0.4s; }
+.progress-val { font-size: 12px; color: var(--color-text-tertiary); min-width: 40px; text-align: right; }
+.flag-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+.flag-item:last-child { border-bottom: none; }
+.flag-dot { width: 8px; height: 8px; border-radius: 50%; background: #E24B4A; margin-top: 4px; flex-shrink: 0; }
+.flag-text { color: var(--color-text-primary); }
+.supp-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+.supp-row:last-child { border-bottom: none; }
+.supp-name { color: var(--color-text-primary); font-weight: 500; }
+.supp-val { color: var(--color-text-secondary); }
+.supp-action { font-size: 11px; color: #185FA5; }
+.tracker-input { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1rem; }
+.tracker-row { display: flex; align-items: center; gap: 12px; }
+.tracker-label { font-size: 13px; color: var(--color-text-secondary); min-width: 160px; }
+.pain-slider { width: 100%; accent-color: #1D9E75; }
+.pain-display { font-size: 14px; font-weight: 500; min-width: 28px; text-align: center; }
+.save-btn { background: #1D9E75; color: white; border: none; border-radius: var(--border-radius-md); padding: 8px 20px; font-size: 13px; cursor: pointer; font-family: var(--font-sans); margin-top: 4px; }
+.save-btn:hover { background: #0F6E56; }
+.history-entry { padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: grid; grid-template-columns: 100px 1fr; gap: 8px; font-size: 13px; }
+.history-entry:last-child { border-bottom: none; }
+.history-date { color: var(--color-text-tertiary); }
+.history-data { color: var(--color-text-primary); }
+.algo-box { padding: 10px 12px; border-radius: var(--border-radius-md); font-size: 13px; margin-bottom: 8px; }
+.algo-verde { background: #EAF3DE; color: #27500A; border-left: 3px solid #3B6D11; border-radius: 0; border-top-right-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
+.algo-amarillo { background: #FAEEDA; color: #633806; border-left: 3px solid #854F0B; border-radius: 0; border-top-right-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
+.algo-rojo { background: #FCEBEB; color: #501313; border-left: 3px solid #A32D2D; border-radius: 0; border-top-right-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
+.phase-badge { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: var(--border-radius-md); font-weight: 500; margin-bottom: 1rem; }
+.phase-1 { background: #E1F5EE; color: #0F6E56; }
+.phase-2 { background: #E6F1FB; color: #185FA5; }
+.phase-3 { background: #FAEEDA; color: #854F0B; }
+</style>
+
+<div class="dash">
+  <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.5rem;">
+    <div>
+      <div style="font-size:18px; font-weight:500; color:var(--color-text-primary);">Plan de Rehabilitación</div>
+      <div style="font-size:13px; color:var(--color-text-secondary); margin-top:2px;">Mario Alberto Monzón Delgado — Diciembre 2025</div>
+    </div>
+    <span class="phase-badge phase-1">Fase 1 — Semanas 1-2</span>
+  </div>
+
+  <div class="grid4">
+    <div class="metric-card">
+      <div class="metric-label">IMC actual</div>
+      <div class="metric-val">32.0</div>
+      <div class="metric-sub">Objetivo: &lt;30</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Cintura</div>
+      <div class="metric-val">113.5 cm</div>
+      <div class="metric-sub">Riesgo CV alto</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Vitamina D</div>
+      <div class="metric-val">28.4</div>
+      <div class="metric-sub">ng/mL — déficit</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">LDL</div>
+      <div class="metric-val">134</div>
+      <div class="metric-sub">mg/dL — elevado</div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('semana')">Semana</button>
+    <button class="tab-btn" onclick="showTab('sesiones')">Sesiones</button>
+    <button class="tab-btn" onclick="showTab('semaforo')">Semáforo</button>
+    <button class="tab-btn" onclick="showTab('registro')">Registro</button>
+    <button class="tab-btn" onclick="showTab('salud')">Salud</button>
+  </div>
+
+  <div id="tab-semana" class="panel visible">
+    <p class="section-title">Arquitectura semanal</p>
+    <div class="week-grid" id="weekGrid"></div>
+    <div id="dayDetail" class="card" style="min-height:60px;"></div>
+  </div>
+
+  <div id="tab-sesiones" class="panel">
+    <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
+      <button class="tab-btn active" id="btnLunes" onclick="showSesion('lunes')">Lunes</button>
+      <button class="tab-btn" id="btnMiercoles" onclick="showSesion('miercoles')">Miércoles</button>
+      <button class="tab-btn" id="btnViernes" onclick="showSesion('viernes')">Viernes</button>
+    </div>
+    <div id="sesionContent" class="card"></div>
+  </div>
+
+  <div id="tab-semaforo" class="panel">
+    <p class="section-title">Semáforo de dolor (escala 0–10)</p>
+    <div class="semaforo">
+      <div class="sem-item sem-verde">
+        <div class="sem-nivel">0–2</div>
+        <div class="sem-label">Verde</div>
+        <div class="sem-action">Continuar. Molestia muscular normal.</div>
+      </div>
+      <div class="sem-item sem-amarillo">
+        <div class="sem-nivel">3–4</div>
+        <div class="sem-label">Amarillo</div>
+        <div class="sem-action">No subir carga. Revisar técnica.</div>
+      </div>
+      <div class="sem-item sem-rojo">
+        <div class="sem-nivel">&gt;5</div>
+        <div class="sem-label">Rojo</div>
+        <div class="sem-action">PARAR. Eliminar ejercicio. Consultar.</div>
+      </div>
+    </div>
+
+    <p class="section-title">Progresión de carga</p>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="progress-row">
+        <span class="progress-label">Sem 1-2: Técnica</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:25%; background:#1D9E75;"></div></div>
+        <span class="progress-val">25%</span>
+      </div>
+      <div class="progress-row">
+        <span class="progress-label">Sem 3-4: +Reps</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:50%; background:#185FA5;"></div></div>
+        <span class="progress-val">50%</span>
+      </div>
+      <div class="progress-row">
+        <span class="progress-label">Sem 5-8: +Carga</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:100%; background:#854F0B;"></div></div>
+        <span class="progress-val">100%</span>
+      </div>
+    </div>
+
+    <p class="section-title">Red flags — detener inmediatamente</p>
+    <div class="card">
+      <div class="flag-item"><div class="flag-dot"></div><div class="flag-text">Bloqueo articular (la rodilla se "traba")</div></div>
+      <div class="flag-item"><div class="flag-dot"></div><div class="flag-text">Chasquido seguido de dolor agudo</div></div>
+      <div class="flag-item"><div class="flag-dot"></div><div class="flag-text">Inflamación visible que persiste más de 24 horas</div></div>
+      <div class="flag-item"><div class="flag-dot"></div><div class="flag-text">Inestabilidad — sensación de fallo en la rodilla</div></div>
+    </div>
+  </div>
+
+  <div id="tab-registro" class="panel">
+    <p class="section-title">Registro semanal (domingo)</p>
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="tracker-input">
+        <div class="tracker-row">
+          <span class="tracker-label">Peso corporal (kg)</span>
+          <input type="number" id="inPeso" placeholder="ej. 95.5" style="width:120px; font-size:14px;" />
+        </div>
+        <div class="tracker-row">
+          <span class="tracker-label">Cintura (cm)</span>
+          <input type="number" id="inCintura" placeholder="ej. 112" style="width:120px; font-size:14px;" />
+        </div>
+        <div class="tracker-row">
+          <span class="tracker-label">Dolor rodilla (0–10)</span>
+          <input type="range" id="inDolor" min="0" max="10" value="0" step="1" class="pain-slider" style="width:140px;" oninput="updateDolor(this.value)"/>
+          <span class="pain-display" id="dolorVal">0</span>
+          <span id="dolorSem" style="font-size:11px;color:var(--color-text-secondary);"></span>
+        </div>
+        <div class="tracker-row">
+          <span class="tracker-label">¿Subiste carga en Hip Thrust?</span>
+          <select id="inHipThrust" style="font-size:13px; width:100px;">
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+      <button class="save-btn" onclick="guardarRegistro()">Guardar semana</button>
+      <div id="algoBox" style="margin-top:12px; display:none;"></div>
+    </div>
+
+    <p class="section-title">Historial</p>
+    <div class="card" id="historialBox">
+      <div style="font-size:13px; color:var(--color-text-tertiary);">Sin registros aún.</div>
+    </div>
+  </div>
+
+  <div id="tab-salud" class="panel">
+    <p class="section-title">Recomendaciones complementarias</p>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="supp-row">
+        <div><div class="supp-name">Vitamina D</div><div class="supp-val">28.4 ng/mL — déficit</div></div>
+        <div class="supp-action">1000–2000 UI/día</div>
+      </div>
+      <div class="supp-row">
+        <div><div class="supp-name">LDL colesterol</div><div class="supp-val">134 mg/dL — elevado</div></div>
+        <div class="supp-action">Fibra + grasas saludables</div>
+      </div>
+      <div class="supp-row">
+        <div><div class="supp-name">Hidratación</div><div class="supp-val">eGFR 83 — función renal ok</div></div>
+        <div class="supp-action">2.5–3 L/día</div>
+      </div>
+      <div class="supp-row">
+        <div><div class="supp-name">Calzado</div><div class="supp-val">Impactos residuales</div></div>
+        <div class="supp-action">Amortiguación + arco</div>
+      </div>
+    </div>
+
+    <p class="section-title">Cardio — reglas de oro</p>
+    <div class="grid2">
+      <div class="card" style="border-left:3px solid #1D9E75; border-radius:0; border-top-right-radius:var(--border-radius-lg); border-bottom-right-radius:var(--border-radius-lg);">
+        <div style="font-size:12px; font-weight:500; color:#0F6E56; margin-bottom:6px;">Permitido</div>
+        <div style="font-size:13px; color:var(--color-text-secondary); line-height:1.7;">Bicicleta (sillín alto), Elíptica, Natación, Caminata en plano. Objetivo: 8.000–10.000 pasos/día.</div>
+      </div>
+      <div class="card" style="border-left:3px solid #E24B4A; border-radius:0; border-top-right-radius:var(--border-radius-lg); border-bottom-right-radius:var(--border-radius-lg);">
+        <div style="font-size:12px; font-weight:500; color:#A32D2D; margin-bottom:6px;">Prohibido</div>
+        <div style="font-size:13px; color:var(--color-text-secondary); line-height:1.7;">Correr, saltar, HIIT en suelo, escaladoras. Nunca flexionar la rodilla más de 90° en bicicleta.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const days = [
+  { name:'Lun', label:'Fuerza A', badge:'badge-fuerza', detail:'Patrón dominante de cadera. Hip Thrust, Prensa, Accesorios. Intensidad moderada.', icon:'💪' },
+  { name:'Mar', label:'Cardio Z2', badge:'badge-cardio', detail:'Bicicleta / Elíptica / Caminata. 60–70% FCmax. 30–45 min. Hablar pero no cantar.', icon:'🚴' },
+  { name:'Mié', label:'Fuerza B', badge:'badge-fuerza', detail:'Control de rodilla. Unilateral + Propiocepción. Carga ligera, técnica perfecta.', icon:'🦵' },
+  { name:'Jue', label:'Descarga', badge:'badge-descarga', detail:'Caminata suave + Movilidad articular. Intensidad baja. Recuperación activa.', icon:'🚶' },
+  { name:'Vie', label:'Fuerza C', badge:'badge-fuerza', detail:'Estabilidad + Integración. Fuerza + Finisher metabólico. Intensidad moderada-alta.', icon:'🏋️' },
+  { name:'Sáb', label:'Cardio', badge:'badge-cardio', detail:'Zona 2 sostenido. 45–60 min. Bicicleta o elíptica. Ritmo conversacional.', icon:'🚴' },
+  { name:'Dom', label:'Descanso', badge:'badge-descanso', detail:'Recuperación sistémica total. Sin ejercicio estructurado. Hidratación y sueño.', icon:'😴' },
+];
+
+const wg = document.getElementById('weekGrid');
+days.forEach((d,i) => {
+  const el = document.createElement('div');
+  el.className = 'day-card' + (i===0?' active':'');
+  el.innerHTML = `<div class="day-name">${d.name}</div><span class="day-icon">${d.icon}</span><span class="day-badge ${d.badge}">${d.label}</span>`;
+  el.onclick = () => {
+    document.querySelectorAll('.day-card').forEach(x=>x.classList.remove('active'));
+    el.classList.add('active');
+    showDayDetail(d);
+  };
+  wg.appendChild(el);
+});
+
+function showDayDetail(d) {
+  document.getElementById('dayDetail').innerHTML = `<div style="font-size:14px; font-weight:500; margin-bottom:4px;">${d.icon} ${d.name} — ${d.label}</div><div style="font-size:13px; color:var(--color-text-secondary);">${d.detail}</div>`;
+}
+showDayDetail(days[0]);
+
+const sesiones = {
+  lunes: {
+    title: 'Lunes — Fuerza A (Patrón dominante de cadera)',
+    color: '#1D9E75',
+    objetivo: 'Activar glúteos para quitar carga a la rodilla.',
+    ejercicios: [
+      ['Activación (Monster Walks + Clamshell)','2','15','—','Banda elástica. Activación previa.'],
+      ['Hip Thrust','4','10–12','2-1-2','Prioridad máxima. Apriete glúteo arriba, sin hiperextender lumbar.'],
+      ['Prensa Inclinada','3','12','3-1-1','Pies altos. No bajar de 90° de flexión.'],
+      ['Curl Femoral','3','12','2-1-2','Controla la bajada. Equilibra la rodilla.'],
+      ['Abducción Cadera','3','15','2-0-2','Máquina o banda. Sin compensar con tronco.'],
+      ['Equilibrio Unilateral','3','30"','—','Rodilla alineada con el 2° dedo del pie.'],
+      ['Cardio Post (Bicicleta)','1','15 min','Z2','Bicicleta estática suave.'],
+    ]
+  },
+  miercoles: {
+    title: 'Miércoles — Fuerza B (Control de rodilla)',
+    color: '#185FA5',
+    objetivo: 'Reeducar el movimiento de la rodilla bajo carga ligera.',
+    ejercicios: [
+      ['Activación','2','15','—','Igual que lunes. Monster Walks + Clamshell.'],
+      ['Step-Down','3','10','3-1-1','Rodilla NO colapsa hacia dentro. Bajada lenta.'],
+      ['Prensa Unilateral','3','10','2-1-2','Carga ligera. Control total del trayecto.'],
+      ['Extensión Cuádriceps','3','12','2-1-2','Rango seguro: 90° → 45°. No bloquear arriba.'],
+      ['Hip Thrust','3','12','2-1-2','Carga moderada. Enfoque en resistencia.'],
+      ['Core Pallof Press','3','12','2-0-2','Anti-rotación. Estabilidad central.'],
+      ['Propiocepción','3','30"','—','Bosu/Airex si disponible.'],
+    ]
+  },
+  viernes: {
+    title: 'Viernes — Fuerza C (Estabilidad + Integración)',
+    color: '#7F77DD',
+    objetivo: 'Consolidar ganancias y gasto metabólico.',
+    ejercicios: [
+      ['Hip Thrust','4','8','2-1-2','Carga ligeramente superior si hay tolerancia.'],
+      ['Peso Muerto Rumano','3','10','3-1-1','Rodilla semiflexionada fija. Movimiento de cadera.'],
+      ['Prensa Inclinada','3','12','2-1-2','Mantener técnica estricta.'],
+      ['Step-Down','3','8','3-1-1','Mayor control, menos profundidad si hay molestia.'],
+      ['Finisher Bicicleta','1','10 min','Z2','Bicicleta continua sin pausa.'],
+    ]
+  }
+};
+
+function showSesion(key) {
+  ['Lunes','Miercoles','Viernes'].forEach(d => {
+    const b = document.getElementById('btn'+d);
+    if(b) b.classList.remove('active');
+  });
+  const btn = document.getElementById('btn'+key.charAt(0).toUpperCase()+key.slice(1));
+  if(btn) btn.classList.add('active');
+  const s = sesiones[key];
+  let rows = s.ejercicios.map(e => `<tr><td style="font-weight:500;">${e[0]}</td><td style="text-align:center;">${e[1]}</td><td style="text-align:center;">${e[2]}</td><td style="text-align:center;">${e[3]}</td><td class="note-cell">${e[4]}</td></tr>`).join('');
+  document.getElementById('sesionContent').innerHTML = `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+      <div style="width:6px; height:6px; border-radius:50%; background:${s.color};"></div>
+      <div style="font-size:14px; font-weight:500;">${s.title}</div>
+    </div>
+    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:12px;">${s.objetivo}</div>
+    <div style="overflow-x:auto;">
+    <table class="exercise-table">
+      <thead><tr><th>Ejercicio</th><th>Series</th><th>Reps</th><th>Tempo</th><th>Notas</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+showSesion('lunes');
+
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('visible');
+  event.target.classList.add('active');
+}
+
+let historial = [];
+
+function updateDolor(v) {
+  document.getElementById('dolorVal').textContent = v;
+  const sems = ['','','verde','verde','amarillo','amarillo','rojo','rojo','rojo','rojo','rojo'];
+  const labels = ['','','Normal','Normal','Precaución','Precaución','Detener','Detener','Detener','Detener','Detener'];
+  document.getElementById('dolorSem').textContent = labels[v] || '';
+}
+
+function guardarRegistro() {
+  const peso = document.getElementById('inPeso').value;
+  const cintura = document.getElementById('inCintura').value;
+  const dolor = parseInt(document.getElementById('inDolor').value);
+  const hip = document.getElementById('inHipThrust').value;
+  if(!peso && !cintura) { return; }
+
+  const semana = historial.length + 1;
+  historial.unshift({ semana, peso, cintura, dolor, hip, fecha: new Date().toLocaleDateString('es-ES') });
+
+  let algoClass = 'algo-verde', algoText = '';
+  if(dolor > 5) {
+    algoClass = 'algo-rojo';
+    algoText = 'Rodilla por encima de 5/10 — Reducir carga 20%, eliminar ejercicios unilaterales profundos, priorizar isométricos.';
+  } else if(dolor >= 3) {
+    algoClass = 'algo-amarillo';
+    algoText = 'Dolor en zona amarilla — Mantener carga actual, no subir. Revisar técnica en cada ejercicio.';
+  } else if(hip === 'si') {
+    algoClass = 'algo-verde';
+    algoText = 'Rodilla bien y progresión en Hip Thrust — Mantener el plan. Puedes subir ligeramente la carga.';
+  } else {
+    algoClass = 'algo-amarillo';
+    algoText = 'Rodilla bien pero sin progresión — Añadir 10 min al cardio Zona 2 o incrementar pasos diarios.';
+  }
+  document.getElementById('algoBox').style.display = 'block';
+  document.getElementById('algoBox').innerHTML = `<div class="algo-box ${algoClass}">${algoText}</div>`;
+
+  renderHistorial();
+}
+
+function renderHistorial() {
+  if(!historial.length) return;
+  const box = document.getElementById('historialBox');
+  box.innerHTML = historial.map(h => `
+    <div class="history-entry">
+      <div class="history-date">Sem ${h.semana} · ${h.fecha}</div>
+      <div class="history-data">${h.peso ? h.peso+'kg' : '—'} · ${h.cintura ? h.cintura+'cm' : '—'} · Dolor: ${h.dolor}/10 · Hip Thrust: ${h.hip==='si'?'↑ Sí':'= No'}</div>
+    </div>`).join('');
+}
+</script>
